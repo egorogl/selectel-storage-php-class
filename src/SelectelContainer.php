@@ -103,6 +103,7 @@ class SelectelContainer extends SelectelStorage
             ->setHeaders($headers)
             ->request("GET")
             ->getResult();
+        
         return $res;
     }
 

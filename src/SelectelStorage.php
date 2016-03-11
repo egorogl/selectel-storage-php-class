@@ -87,6 +87,7 @@ class SelectelStorage
     {
         if (self::$throwExceptions)
             throw new SelectelStorageException($message, $code);
+
         return $code;
     }
 
@@ -101,9 +102,11 @@ class SelectelStorage
     protected static function getX($headers, $prefix = 'x-')
     {
         $result = array();
+
         foreach($headers as $key => $value)
             if (stripos($key, $prefix) === 0 || stripos($value, $prefix) === 0)
                 $result[$key] = $value;
+
         return $result;
     }
 
@@ -118,6 +121,7 @@ class SelectelStorage
             ->setHeaders($this->token)
             ->request("HEAD")
             ->getHeaders();
+
         return $this->getX($head);
     }
 
@@ -219,7 +223,6 @@ class SelectelStorage
      *
      * @param string $name Name of object
      * @param array $headers Headers
-     * @param string $type
      *
      * @return integer
      */
@@ -238,6 +241,14 @@ class SelectelStorage
         return $info["http_code"];
     }
 
+    /**
+     * Setting meta info for container
+     *
+     * @param string $name Name of container
+     * @param array $headers Headers
+     *
+     * @return integer
+     */
     public function setContainerHeaders($name, $headers)
     {
         $headers = $this->getX($headers, "X-Container-Meta-");
@@ -274,9 +285,9 @@ class SelectelStorage
      * @param string $remotePath The path to extract archive
      * @return array
      */
-    public function putArchive($archive, $path = null) {
+    public function putArchive($archive, $path = null)
+    {
         $url = $this->url . $path . '?extract-archive=' . pathinfo($archive, PATHINFO_EXTENSION);
-
 
         switch ($this->format){
             case 'json':
@@ -299,19 +310,19 @@ class SelectelStorage
             return explode("\n", trim($info));
         }
 
-
         return $this->format == 'json' ? json_decode($info, TRUE) : trim($info);
     }
 
 
     /**
-	 * Set X-Account-Meta-Temp-URL-Key for temp file download link generation. Run it once and use key forever.
+	 * Set X-Account-Meta-Temp-URL-Key for temp file download
+	 * link generation. Run it once and use key forever.
 	 *
 	 * @param string $key
 	 *
 	 * @return integer
 	 */
-	public function setAccountMetaTempURLKey ($key)
+	public function setAccountMetaTempURLKey($key)
 	{
 		$url = $this->url;
 		$headers = array_merge($this->token, array("X-Account-Meta-Temp-URL-Key: " . $key));
@@ -336,7 +347,7 @@ class SelectelStorage
 	 *
 	 * @return string
 	 */
-	public function getTempURL ($key, $path, $expires, $otherFileName=null)
+	public function getTempURL($key, $path, $expires, $otherFileName = null)
 	{
 		$url = substr($this->url, 0, strlen($this->url)-1);
 
@@ -346,8 +357,7 @@ class SelectelStorage
 
 		$res = $url . $path . '?temp_url_sig=' . $sig . '&temp_url_expires=' . $expires;
 
-		if($otherFileName != null)
-		{
+		if ($otherFileName != null) {
 			$res .= '&filename=' . urlencode($otherFileName);
 		}
 
