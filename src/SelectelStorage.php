@@ -102,7 +102,7 @@ class SelectelStorage
     {
         $result = array();
         foreach($headers as $key => $value)
-            if (stripos($key, $prefix) === 0)
+            if (stripos($key, $prefix) === 0 || stripos($value, $prefix) === 0)
                 $result[$key] = $value;
         return $result;
     }
@@ -219,24 +219,20 @@ class SelectelStorage
      *
      * @param string $name Name of object
      * @param array $headers Headers
+     * @param string $type
      *
      * @return integer
      */
     protected function setMetaInfo($name, $headers)
     {
-        if (get_class($this) == 'SelectelStorage')
-            $headers = $this->getX($headers, "X-Container-Meta-");
-        elseif (get_class($this) == 'SelectelContainer')
-            $headers = $this->getX($headers, "X-Container-Meta-");
-        else
-            return 0;
+        $headers = array_merge($headers, $this->token);
 
         $info =	SCurl::init($this->url . $name)
             ->setHeaders($headers)
             ->request("POST")
             ->getInfo();
 
-        if (!in_array($info["http_code"], array(204)))
+        if (!in_array($info["http_code"], array(202)))
             return $this->error($info["http_code"], __METHOD__);
 
         return $info["http_code"];
@@ -270,7 +266,7 @@ class SelectelStorage
 
         return new SelectelContainer($url, $this->token, $this->format, $this->getX($headers));
     }
-    
+
     /**
      * Upload  and extract archive
      *
@@ -280,8 +276,8 @@ class SelectelStorage
      */
     public function putArchive($archive, $path = null) {
         $url = $this->url . $path . '?extract-archive=' . pathinfo($archive, PATHINFO_EXTENSION);
-        
-        
+
+
         switch ($this->format){
             case 'json':
                 $headers = array_merge($this->token, ['Accept: application/json']);
@@ -293,7 +289,7 @@ class SelectelStorage
                 $headers = array_merge($this->token, ['Accept: text/plain']);
                 break;
         }
-        
+
         $info = SCurl::init($url)
                 ->setHeaders($headers)
                 ->putFile($archive)
@@ -302,12 +298,12 @@ class SelectelStorage
         if ($this->format == '') {
             return explode("\n", trim($info));
         }
-        
+
 
         return $this->format == 'json' ? json_decode($info, TRUE) : trim($info);
     }
 
-    
+
     /**
 	 * Set X-Account-Meta-Temp-URL-Key for temp file download link generation. Run it once and use key forever.
 	 *
@@ -326,10 +322,10 @@ class SelectelStorage
 
 		if (!in_array($res["HTTP-Code"], array(204)))
 			return $this->error($res ["HTTP-Code"], __METHOD__);
-		
+
 		return $res["HTTP-Code"];
 	}
-	
+
 	/**
 	 * Get temp file download link
 	 *
@@ -343,18 +339,18 @@ class SelectelStorage
 	public function getTempURL ($key, $path, $expires, $otherFileName=null)
 	{
 		$url = substr($this->url, 0, strlen($this->url)-1);
-		
+
 		$sig_body = "GET\n$expires\n$path";
-		
+
 		$sig = hash_hmac('sha1', $sig_body, $key);
-		
+
 		$res = $url . $path . '?temp_url_sig=' . $sig . '&temp_url_expires=' . $expires;
-		
+
 		if($otherFileName != null)
 		{
 			$res .= '&filename=' . urlencode($otherFileName);
 		}
-				
+
 		return $res;
 	}
 }

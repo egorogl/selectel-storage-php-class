@@ -133,17 +133,17 @@ class SelectelContainer extends SelectelStorage
         if (is_null($remoteFileName))
             $remoteFileName = array_pop(explode(DIRECTORY_SEPARATOR, $localFileName));
 
-        $info = SCurl::init($this->url . $remoteFileName)
+        $result = SCurl::init($this->url . $remoteFileName)
             ->setHeaders($this->token)
             ->putFile($localFileName)
-            ->getInfo();
+            ->getResult();
 
-        if (!in_array($info["http_code"], array(201)))
-            return $this->error($info["http_code"], __METHOD__);
+        if (!in_array($result['info']["http_code"], array(201)))
+            return $this->error($result['info']["http_code"], __METHOD__);
 
-        return $info;
+        return $result;
     }
-    
+
     /**
      * Upload binary string as file
      *
@@ -153,15 +153,15 @@ class SelectelContainer extends SelectelStorage
      */
     public function putFileContents($contents, $remoteFileName = null)
     {
-        $info = SCurl::init($this->url . $remoteFileName)
+        $result = SCurl::init($this->url . $remoteFileName)
             ->setHeaders($this->token)
             ->putFileContents($contents)
-            ->getInfo();
+            ->getResult();
 
-        if (!in_array($info["http_code"], array(201)))
-            return $this->error($info["http_code"], __METHOD__);
+        if (!in_array($result['info']["http_code"], array(201)))
+            return $this->error($result['info']["http_code"], __METHOD__);
 
-        return $info;
+        return $result;
     }
 
     /**
@@ -174,7 +174,7 @@ class SelectelContainer extends SelectelStorage
      */
     public function setFileHeaders($name, $headers)
     {
-        $headers = $this->getX($headers, "X-Container-Meta-");
+        $headers = $this->getX($headers, "X-Object-Meta-");
         if (get_class($this) != 'SelectelContainer') return 0;
 
         return $this->setMetaInfo($name, $headers);
