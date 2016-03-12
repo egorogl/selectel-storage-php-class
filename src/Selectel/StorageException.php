@@ -8,7 +8,7 @@
  */
 namespace Selectel;
 
-class StorageException extends Exception
+class StorageException extends \Exception
 {
 
 }
