@@ -6,9 +6,9 @@
  *
  * @author   Eugene Smith <easmith@mail.ru>
  */
+namespace Selectel;
 
-
-class SelectelContainer extends SelectelStorage
+class Container extends Storage
 {
     /**
      * 'x-' Headers of container
@@ -103,7 +103,7 @@ class SelectelContainer extends SelectelStorage
             ->setHeaders($headers)
             ->request("GET")
             ->getResult();
-        
+
         return $res;
     }
 
@@ -176,7 +176,7 @@ class SelectelContainer extends SelectelStorage
     public function setFileHeaders($name, $headers)
     {
         $headers = $this->getX($headers, "X-Object-Meta-");
-        if (get_class($this) != 'SelectelContainer') return 0;
+        if (get_class($this) != 'Selectel\Container') return 0;
 
         return $this->setMetaInfo($name, $headers);
     }

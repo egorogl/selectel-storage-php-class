@@ -4,12 +4,11 @@
  *
  * PHP version 5
  *
- * @category selectel-storage-php-class
- * @package class_package
  * @author Eugene Kuznetcov <easmith@mail.ru>
  */
+namespace Selectel;
 
-class SelectelStorageException extends Exception
+class StorageException extends Exception
 {
 
 }

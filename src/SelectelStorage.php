@@ -6,9 +6,9 @@
  *
  * @author   Eugene Smith <easmith@mail.ru>
  */
+namespace Selectel;
 
-
-class SelectelStorage
+class Storage
 {
     /**
      * Header string in array for authtorization.
@@ -52,7 +52,7 @@ class SelectelStorage
      * @param string $key Storage key
      * @param string $format Allowed response formats
      *
-     * @return SelectelStorage
+     * @return \Selectel\Storage
      */
     public function __construct($user, $key, $format = null)
     {
@@ -81,12 +81,12 @@ class SelectelStorage
      * @param string $message
      *
      * @return mixed
-     * @throws SelectelStorageException
+     * @throws StorageException
      */
     protected function error($code, $message)
     {
         if (self::$throwExceptions)
-            throw new SelectelStorageException($message, $code);
+            throw new StorageException($message, $code);
 
         return $code;
     }
@@ -161,7 +161,7 @@ class SelectelStorage
      * @param string $name
      * @param array $headers
      *
-     * @return SelectelContainer
+     * @return \Selectel\Container
      */
     public function createContainer($name, $headers = array())
     {
@@ -252,7 +252,7 @@ class SelectelStorage
     public function setContainerHeaders($name, $headers)
     {
         $headers = $this->getX($headers, "X-Container-Meta-");
-        if (get_class($this) != 'SelectelStorage') return 0;
+        if (get_class($this) != 'Selectel\Storage') return 0;
 
         return $this->setMetaInfo($name, $headers);
     }
@@ -262,7 +262,7 @@ class SelectelStorage
      *
      * @param string $name
      *
-     * @return SelectelContainer
+     * @return \Selectel\Container
      */
     public function getContainer($name)
     {
@@ -275,7 +275,7 @@ class SelectelStorage
         if (!in_array($headers["HTTP-Code"], array(204)))
             return $this->error($headers["HTTP-Code"], __METHOD__);
 
-        return new SelectelContainer($url, $this->token, $this->format, $this->getX($headers));
+        return new Container($url, $this->token, $this->format, $this->getX($headers));
     }
 
     /**

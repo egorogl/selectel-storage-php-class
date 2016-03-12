@@ -4,10 +4,9 @@
  *
  * PHP version 5
  *
- * @category selectel-storage-php-class
- * @package class_package
  * @author Eugene Kuznetcov <easmith@mail.ru>
  */
+namespace Selectel;
 
 class SCurl {
 
@@ -161,7 +160,8 @@ class SCurl {
     public function putFile($file)
     {
         if (!file_exists($file))
-            throw new SelectelStorageException("File '{$file}' does not exist");
+            throw new StorageException("File '{$file}' does not exist");
+
         $fp = fopen($file, "r");
         curl_setopt($this->ch, CURLOPT_INFILE, $fp);
         curl_setopt($this->ch, CURLOPT_INFILESIZE, filesize($file));
@@ -169,7 +169,7 @@ class SCurl {
         fclose($fp);
         return self::$instance;
     }
-    
+
     public function putFileContents($contents)
     {
         $fp = fopen("php://temp", "r+");
@@ -274,4 +274,4 @@ class SCurl {
         return $this->result['info'];
     }
 
-} 
+}
