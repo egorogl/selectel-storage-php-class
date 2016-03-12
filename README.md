@@ -6,7 +6,7 @@ composer.json
 ```js
 
 "require": {
-    "easmith/selectel-storage": "~1.0",
+    "slowprog/selectel-storage": "~1.0",
 }
 
 ```
@@ -20,7 +20,7 @@ $selectelStorage = new SelectelStorage("User", "Pass");
 
 ```
 
-### Create Container 
+### Create Container
 ```php
 $container = $selectelStorage->createContainer('selectel', array("X-Container-Meta-Type: public"));
 // get container info
