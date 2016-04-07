@@ -355,12 +355,37 @@ class Storage
 
 		$sig = hash_hmac('sha1', $sig_body, $key);
 
-		$res = $url . $path . '?temp_url_sig=' . $sig . '&temp_url_expires=' . $expires;
+		$res = $url . $this->mbRawUrlEncode($path) . '?temp_url_sig=' . $sig . '&temp_url_expires=' . $expires;
 
 		if ($otherFileName != null) {
 			$res .= '&filename=' . urlencode($otherFileName);
 		}
 
 		return $res;
+	}
+
+	/**
+	 * Function to convert an UTF-8 string to URL encoded string.
+	 * Instead of the standard rawurlencode that does not work with multi-byte characters
+	 * All the given characters are converted except a few according to RFC 3986 (but without changing "%25" to "%")
+	 * @see http://php.net/manual/ru/function.urlencode.php#97969
+	 *
+	 * @param string $url
+	 *
+	 * @return string
+	 */
+	private function mbRawUrlEncode($url)
+	{
+	    $entities = array('%21', '%2A', '%27', '%28', '%29', '%3B', '%3A', '%40', '%26', '%3D', '%2B', '%24', '%2C', '%2F', '%3F', '%23', '%5B', '%5D');
+	    $replacements = array('!', '*', "'", "(", ")", ";", ":", "@", "&", "=", "+", "$", ",", "/", "?", "#", "[", "]");
+
+		$encoded = '';
+		$length = mb_strlen($url);
+
+		for($i = 0; $i < $length; $i++) {
+			$encoded .= '%'.wordwrap(bin2hex(mb_substr($url, $i, 1)), 2, '%', true);
+		}
+
+		return str_ireplace($entities, $replacements, $encoded);
 	}
 }
