@@ -126,16 +126,19 @@ class Container extends Storage
      *
      * @param string $localFileName The name of a local file
      * @param string $remoteFileName The name of storage file
+     * @param array $header
      *
      * @return array
      */
-    public function putFile($localFileName, $remoteFileName = null)
+    public function putFile($localFileName, $remoteFileName = null, $header = null)
     {
         if (is_null($remoteFileName))
             $remoteFileName = array_pop(explode(DIRECTORY_SEPARATOR, $localFileName));
 
+        $header = is_array($header)?array_merge($header, $this->token):$this->token;
+
         $result = SCurl::init($this->url . $remoteFileName)
-            ->setHeaders($this->token)
+            ->setHeaders($header)
             ->putFile($localFileName)
             ->getResult();
 
@@ -150,12 +153,15 @@ class Container extends Storage
      *
      * @param string $contents
      * @param string|null $remoteFileName
+     * @param array $header
      * @return array
      */
-    public function putFileContents($contents, $remoteFileName = null)
+    public function putFileContents($contents, $remoteFileName = null, $header = null))
     {
+        $header = is_array($header)?array_merge($header, $this->token):$this->token;
+
         $result = SCurl::init($this->url . $remoteFileName)
-            ->setHeaders($this->token)
+            ->setHeaders($header)
             ->putFileContents($contents)
             ->getResult();
 
