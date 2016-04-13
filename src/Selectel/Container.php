@@ -156,7 +156,7 @@ class Container extends Storage
      * @param array $header
      * @return array
      */
-    public function putFileContents($contents, $remoteFileName = null, $header = null))
+    public function putFileContents($contents, $remoteFileName = null, $header = null)
     {
         $header = is_array($header)?array_merge($header, $this->token):$this->token;
 
