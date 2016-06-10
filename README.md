@@ -6,7 +6,7 @@ composer.json
 ```js
 
 "require": {
-    "slowprog/selectel-storage": "~1.0",
+    "egorogl/selectel-storage": "~1.0",
 }
 
 ```
@@ -16,7 +16,7 @@ composer.json
 <?php
     
 require_once("vendor/autoload.php");
-$selectelStorage = new SelectelStorage("User", "Pass");
+$selectelStorage = new Selectel\Storage("User", "Pass");
 
 ```
 

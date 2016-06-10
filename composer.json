@@ -1,11 +1,15 @@
 {
-    "name": "slowprog/selectel-storage",
+    "name": "egorogl/selectel-storage",
     "description": "Selectel Storage API php wrapper",
     "minimum-stability": "stable",
     "license": "LGPL-3.0+",
     "authors": [
         {
             "name": "Andrey Tyshev",
+            "role": "Developer"
+        },
+		{
+            "name": "Egor Ogl",
             "role": "Developer"
         }
     ],
