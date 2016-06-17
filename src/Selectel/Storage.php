@@ -8,6 +8,9 @@
  */
 namespace Selectel;
 
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Cache;
+
 class Storage
 {
     /**
@@ -48,30 +51,44 @@ class Storage
     /**
      * Creating Selectel Storage PHP class
      *
-     * @param string $user Account id
-     * @param string $key Storage key
-     * @param string $format Allowed response formats
+     * @param array $config Config Array
      *
      * @return \Selectel\Storage
      */
-    public function __construct($user, $key, $format = null)
+    public function __construct(array $config)
     {
-        $header = SCurl::init("https://auth.selcdn.ru/")
-            ->setHeaders(array("Host: auth.selcdn.ru", "X-Auth-User: {$user}", "X-Auth-Key: {$key}"))
-            ->request("GET")
-            ->getHeaders();
-
-        if ($header["HTTP-Code"] != 204)
+        if (Cache::has('selectelstorage.token'))
         {
-            if ($header["HTTP-Code"] == 403)
-                return $this->error($header["HTTP-Code"], "Forbidden for user '{$user}'");
-
-            return $this->error($header["HTTP-Code"], __METHOD__);
+            $this->url = Cache::get('selectelstorage.url');
+            $this->token = Cache::get('selectelstorage.token');
         }
+        else
+        {
+            $header = SCurl::init("https://auth.selcdn.ru/")
+                ->setHeaders(array(
+                    "Host: auth.selcdn.ru",
+                    "X-Auth-User: {$config['username']}",
+                    "X-Auth-Key: {$config['password']}"
+                ))
+                ->request("GET")
+                ->getHeaders();
 
-        $this->format = (!in_array($format, $this->formats, true) ? $this->format : $format);
-        $this->url = $header['x-storage-url'];
-        $this->token = array("X-Auth-Token: {$header['x-storage-token']}");
+            if ($header["HTTP-Code"] != 204) {
+                if ($header["HTTP-Code"] == 403) {
+                    return $this->error($header["HTTP-Code"], "Forbidden for user '{$config['username']}'");
+                }
+
+                return $this->error($header["HTTP-Code"], __METHOD__);
+            }
+
+            $this->format = (!in_array($config['format'], $this->formats, true) ? $this->format : $config['format']);
+            $this->url = $header['x-storage-url'];
+            $this->token = array("X-Auth-Token: {$header['x-storage-token']}");
+
+            $expiresAt = Carbon::now()->addHours(23);
+            Cache::put('selectelstorage.url', $this->url, $expiresAt);
+            Cache::put('selectelstorage.token', $this->token, $expiresAt);
+        }
     }
 
     /**
