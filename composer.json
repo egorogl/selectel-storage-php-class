@@ -3,6 +3,7 @@
     "description": "Selectel Storage API php wrapper",
     "minimum-stability": "stable",
     "license": "LGPL-3.0+",
+	"version": "0.1.1",
     "authors": [
         {
             "name": "Andrey Tyshev",
